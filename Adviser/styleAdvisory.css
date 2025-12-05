@@ -1,0 +1,76 @@
+/* Advisory page specific styles */
+
+.advisory-controls {
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.show-entries {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.show-entries select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #f8fbfd;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.search-box input {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #f8fbfd;
+  width: 250px;
+}
+
+.advisory-table {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.advisory-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.advisory-table thead {
+  background: transparent;
+  border-bottom: 2px solid #eee;
+}
+
+.advisory-table th {
+  text-align: left;
+  padding: 12px 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.advisory-table td {
+  padding: 12px 15px;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.advisory-table tbody tr:hover {
+  background-color: #f8fbfd;
+}
