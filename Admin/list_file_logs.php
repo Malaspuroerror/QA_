@@ -6,7 +6,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 try {
-    $stmt = $pdo->query("SELECT id, teacher_name, subject, grade_section, file_name, file_path, status, submitted_date, approve_date FROM teacher_files ORDER BY created_at DESC");
+    $limit = 100; // Limit initial load to first 100 records
+    $stmt = $pdo->query("SELECT id, teacher_name, subject, grade_section, file_name, file_path, status, submitted_date, approve_date FROM teacher_files ORDER BY created_at DESC LIMIT {$limit}");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     http_response_code(500);
@@ -37,6 +38,10 @@ foreach ($rows as $r) {
     echo "</tr>";
 
     $idx++;
+}
+
+if (count($rows) >= $limit) {
+    echo '<tr><td colspan="6" style="text-align: center; padding: 10px; color: #999; font-size: 0.9em;">Showing first ' . $limit . ' results. Use search to find more.</td></tr>';
 }
 
 ?>

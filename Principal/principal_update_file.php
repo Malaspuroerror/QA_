@@ -20,11 +20,12 @@ try {
         $importResult = null;
         try {
             require_once __DIR__ . '/../includes/excel_importer.php';
-            $q = $pdo->prepare('SELECT file_path FROM teacher_files WHERE id = :id');
+            $q = $pdo->prepare('SELECT file_path, teacher_name FROM teacher_files WHERE id = :id');
             $q->execute([':id' => $fileId]);
             $r = $q->fetch(PDO::FETCH_ASSOC);
             if ($r && !empty($r['file_path'])) {
-                $importResult = import_excel_file($r['file_path'], $pdo);
+                $teacher = isset($r['teacher_name']) ? $r['teacher_name'] : null;
+                $importResult = import_excel_file($r['file_path'], $pdo, $teacher);
             }
         } catch (Exception $e) {
             $importResult = ['success' => false, 'rows' => 0, 'message' => 'Import failed: ' . $e->getMessage()];

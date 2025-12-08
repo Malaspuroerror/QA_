@@ -6,7 +6,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 try {
-    $stmt = $pdo->query("SELECT id, name, role, email FROM users ORDER BY id ASC");
+    $limit = 100; // Limit initial load to first 100 users
+    $stmt = $pdo->query("SELECT id, name, role, email FROM users ORDER BY id ASC LIMIT {$limit}");
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     http_response_code(500);
@@ -33,6 +34,10 @@ foreach ($rows as $r) {
     echo "</tr>";
 
     $idx++;
+}
+
+if (count($rows) >= $limit) {
+    echo '<tr><td colspan="4" style="text-align: center; padding: 10px; color: #999; font-size: 0.9em;">Showing first ' . $limit . ' users. Use search to find more.</td></tr>';
 }
 
 ?>

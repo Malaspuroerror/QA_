@@ -8,9 +8,10 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
  *
  * @param string $relativePath Path relative to project root (e.g. 'uploads/teacher_files/123_file.xlsx')
  * @param PDO $pdo Database connection object
+ * @param string|null $teacher Name of the teacher who uploaded the file (optional)
  * @return array ['success' => bool, 'rows' => int, 'message' => string]
  */
-function import_excel_file(string $relativePath, PDO $pdo): array
+function import_excel_file(string $relativePath, PDO $pdo, ?string $teacher = null): array
 {
     $projectRoot = realpath(__DIR__ . '/..');
     $fullPath = $projectRoot . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $relativePath);
@@ -57,14 +58,15 @@ function import_excel_file(string $relativePath, PDO $pdo): array
             q2_grade DECIMAL(5,2),
             q3_grade DECIMAL(5,2),
             q4_grade DECIMAL(5,2),
-            final_grade DECIMAL(5,2)
+            final_grade DECIMAL(5,2),
+            teacher VARCHAR(255) DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 
         $pdo->exec($createSQL);
         // Truncate the table to ensure clean import
         $pdo->exec("TRUNCATE TABLE `" . $tableName . "`");
 
-        $insertSQL = "INSERT INTO `" . $tableName . "` (student_name, gender, q1_grade, q2_grade, q3_grade, q4_grade, final_grade) VALUES (:name, :gender, :q1, :q2, :q3, :q4, :final)";
+        $insertSQL = "INSERT INTO `" . $tableName . "` (student_name, gender, q1_grade, q2_grade, q3_grade, q4_grade, final_grade, teacher) VALUES (:name, :gender, :q1, :q2, :q3, :q4, :final, :teacher)";
         $stmt = $pdo->prepare($insertSQL);
 
         $rowsInserted = 0;
@@ -95,7 +97,8 @@ function import_excel_file(string $relativePath, PDO $pdo): array
                 ':q2' => floatval($row[$Q2_COL] ?? 0),
                 ':q3' => floatval($row[$Q3_COL] ?? 0),
                 ':q4' => floatval($row[$Q4_COL] ?? 0),
-                ':final' => floatval($row[$FINAL_COL] ?? 0)
+                ':final' => floatval($row[$FINAL_COL] ?? 0),
+                ':teacher' => $teacher
             ];
 
             $stmt->execute($dataToInsert);

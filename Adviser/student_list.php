@@ -53,21 +53,11 @@
         </div>
 
         <div style="background-color: #d9e8ef; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+          <div style="display:flex; gap:12px; align-items:center;">
             <div>
-              <label>Subject Code:</label>
-              <span style="font-weight: 600;" id="subjectCode">Math</span>
-            </div>
-            <div>
-              <label>Grade Level:</label>
-              <span style="font-weight: 600;" id="gradeLevel">Grade 5</span>
-            </div>
-            <div>
-              <label>Section:</label>
-              <select id="section" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
+              <label>Approved Files:</label>
+              <select id="approvedFileSelect" style="padding:6px 10px; border-radius:6px; border:1px solid #ccc; min-width:220px;">
+                <option value="">-- Select a file --</option>
               </select>
             </div>
           </div>
@@ -81,19 +71,43 @@
                 <th style="width: 60px;">No.</th>
                 <th>Fullname</th>
                 <th style="width: 120px;">Grade</th>
-                <th style="width: 150px;">Remarks</th>
               </tr>
             </thead>
             <tbody id="studentTableBody">
-              <tr>
-                <td colspan="4" style="text-align: center; color: #888;">No students available</td>
-              </tr>
+                <tr>
+                  <td colspan="3" style="text-align: center; color: #888;">No students available</td>
+                </tr>
             </tbody>
           </table>
         </div>
       </section>
     </main>
   </div> <!-- end dashboard container -->
+
+  <!-- Grades modal -->
+  <div id="gradeModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.5);">
+    <div class="modal-content" style="background:#fff; margin:60px auto; padding:20px; border-radius:6px; width:90%; max-width:900px;">
+      <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="modalStudentName">Student Name</h3>
+        <button id="gradeModalClose" class="close-btn" style="cursor:pointer; background:#e74c3c; color:#fff; border:none; padding:6px 10px; border-radius:4px;">Close</button>
+      </div>
+      <div class="modal-body">
+          <table style="width:100%; border-collapse:collapse; margin-top:12px;">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Q1</th>
+              <th>Q2</th>
+              <th>Q3</th>
+              <th>Q4</th>
+              <th>Final</th>
+            </tr>
+          </thead>
+          <tbody id="gradesTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== JAVASCRIPT FILE LINK ===== -->
   <script src="scriptAdviser.js"></script>

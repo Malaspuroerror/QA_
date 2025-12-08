@@ -6,15 +6,16 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
+$limit = 100; // Limit results to first 100 for faster loading
 
 try {
     if (empty($query)) {
-        // If no search query, return all users
-        $stmt = $pdo->query("SELECT id, name, role, email FROM users ORDER BY id ASC");
+        // If no search query, return limited users
+        $stmt = $pdo->query("SELECT id, name, role, email FROM users ORDER BY id ASC LIMIT {$limit}");
     } else {
-        // Search by name, role, or email
+        // Search by name, role, or email with LIMIT
         $searchTerm = '%' . $query . '%';
-        $stmt = $pdo->prepare("SELECT id, name, role, email FROM users WHERE name LIKE ? OR role LIKE ? OR email LIKE ? ORDER BY id ASC");
+        $stmt = $pdo->prepare("SELECT id, name, role, email FROM users WHERE name LIKE ? OR role LIKE ? OR email LIKE ? ORDER BY id ASC LIMIT {$limit}");
         $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
     }
     
@@ -44,6 +45,10 @@ foreach ($rows as $r) {
     echo "</tr>";
 
     $idx++;
+}
+
+if (count($rows) >= $limit) {
+    echo '<tr><td colspan="4" style="text-align: center; padding: 10px; color: #999; font-size: 0.9em;">Showing first ' . $limit . ' results. Refine search to see more.</td></tr>';
 }
 
 ?>

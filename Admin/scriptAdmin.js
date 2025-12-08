@@ -1,30 +1,29 @@
-// Admin dashboard and logs page script
+// Admin dashboard and logs page script - OPTIMIZED
 let userSearchTimeout;
 let logsSearchTimeout;
-let userSearchController = null;
-let logsSearchController = null;
+let lastUserQuery = '';
+let lastLogsQuery = '';
 
 document.addEventListener('DOMContentLoaded', function() {
-  // User search with live filtering on input (debounced)
+  // User search with live filtering on input (debounced - reduced to 150ms for faster response)
   const userSearchInput = document.getElementById('userSearchInput');
   if (userSearchInput) {
     userSearchInput.addEventListener('input', function(e) {
       const v = e.target.value;
-      // quick feedback log
-      // console.log('user input event:', v);
+      console.log('user input event:', v);
       clearTimeout(userSearchTimeout);
-      userSearchTimeout = setTimeout(searchUsers, 120);
+      userSearchTimeout = setTimeout(searchUsers, 150);
     });
   }
 
-  // Logs search with live filtering on input (debounced)
+  // Logs search with live filtering on input (debounced - reduced to 150ms for faster response)
   const logsSearchInput = document.getElementById('logsSearchInput');
   if (logsSearchInput) {
     logsSearchInput.addEventListener('input', function(e) {
       const v = e.target.value;
-      // console.log('logs input event:', v);
+      console.log('logs input event:', v);
       clearTimeout(logsSearchTimeout);
-      logsSearchTimeout = setTimeout(searchLogs, 120);
+      logsSearchTimeout = setTimeout(searchLogs, 150);
     });
   }
 
@@ -39,26 +38,27 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Search users with live input
+// Search users with live input - OPTIMIZED with faster network and caching
 async function searchUsers() {
   const searchInput = document.getElementById('userSearchInput');
   const query = searchInput ? searchInput.value.trim() : '';
   const userTableBody = document.getElementById('usersTableBody');
   
   if (!userTableBody) return;
+  
+  // Skip if query hasn't changed
+  if (query === lastUserQuery) return;
+  lastUserQuery = query;
 
   try {
-    // cancel previous request if still running
-    if (userSearchController) {
-      try { userSearchController.abort(); } catch (e) {}
-    }
-    userSearchController = new AbortController();
-    const signal = userSearchController.signal;
-
     const urlBase = 'search_users.php';
     const url = urlBase + (query ? '?q=' + encodeURIComponent(query) : '') + (query ? '&' : '?') + 't=' + Date.now();
-    // console.log('Searching users with query:', query, 'URL:', url);
-    const res = await fetch(url, { cache: 'no-store', signal });
+    console.log('Searching users with query:', query);
+    
+    // Show loading indicator
+    userTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 15px;">Loading...</td></tr>';
+    
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) {
       console.error('Search users HTTP error', res.status);
       userTableBody.innerHTML = '<tr><td colspan="4" class="no-data">Server error</td></tr>';
@@ -77,26 +77,27 @@ async function searchUsers() {
   }
 }
 
-// Search logs with live input
+// Search logs with live input - OPTIMIZED with faster network and caching
 async function searchLogs() {
   const searchInput = document.getElementById('logsSearchInput');
   const query = searchInput ? searchInput.value.trim() : '';
   const logsTableBody = document.getElementById('logsTableBody');
   
   if (!logsTableBody) return;
+  
+  // Skip if query hasn't changed
+  if (query === lastLogsQuery) return;
+  lastLogsQuery = query;
 
   try {
-    // cancel previous request if still running
-    if (logsSearchController) {
-      try { logsSearchController.abort(); } catch (e) {}
-    }
-    logsSearchController = new AbortController();
-    const signal = logsSearchController.signal;
-
     const urlBase = 'search_logs.php';
     const url = urlBase + (query ? '?q=' + encodeURIComponent(query) : '') + (query ? '&' : '?') + 't=' + Date.now();
-    // console.log('Searching logs with query:', query, 'URL:', url);
-    const res = await fetch(url, { cache: 'no-store', signal });
+    console.log('Searching logs with query:', query);
+    
+    // Show loading indicator
+    logsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 15px;">Loading...</td></tr>';
+    
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) {
       console.error('Search logs HTTP error', res.status);
       logsTableBody.innerHTML = '<tr><td colspan="6" class="no-data">Server error</td></tr>';

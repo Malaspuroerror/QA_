@@ -6,15 +6,16 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
+$limit = 100; // Limit results to first 100 for faster loading
 
 try {
     if (empty($query)) {
-        // If no search query, return all logs
-        $stmt = $pdo->query("SELECT id, teacher_name, subject, grade_section, file_name, file_path, status, submitted_date, approve_date FROM teacher_files ORDER BY created_at DESC");
+        // If no search query, return limited logs
+        $stmt = $pdo->query("SELECT id, teacher_name, subject, grade_section, file_name, file_path, status, submitted_date, approve_date FROM teacher_files ORDER BY created_at DESC LIMIT {$limit}");
     } else {
-        // Search by filename, teacher name, or status
+        // Search by filename, teacher name, or status with LIMIT
         $searchTerm = '%' . $query . '%';
-        $stmt = $pdo->prepare("SELECT id, teacher_name, subject, grade_section, file_name, file_path, status, submitted_date, approve_date FROM teacher_files WHERE file_name LIKE ? OR teacher_name LIKE ? OR status LIKE ? ORDER BY created_at DESC");
+        $stmt = $pdo->prepare("SELECT id, teacher_name, subject, grade_section, file_name, file_path, status, submitted_date, approve_date FROM teacher_files WHERE file_name LIKE ? OR teacher_name LIKE ? OR status LIKE ? ORDER BY created_at DESC LIMIT {$limit}");
         $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
     }
     
@@ -48,6 +49,10 @@ foreach ($rows as $r) {
     echo "</tr>";
 
     $idx++;
+}
+
+if (count($rows) >= $limit) {
+    echo '<tr><td colspan="6" style="text-align: center; padding: 10px; color: #999; font-size: 0.9em;">Showing first ' . $limit . ' results. Refine search to see more.</td></tr>';
 }
 
 ?>

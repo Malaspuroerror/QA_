@@ -17,7 +17,7 @@ if (isset($_POST['btnSignIn'])) {
         exit();
     }
 
-    $stmt = $pdo->prepare("SELECT password_hash, role, name FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT id, password_hash, role, name FROM users WHERE email = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -26,7 +26,30 @@ if (isset($_POST['btnSignIn'])) {
         $_SESSION['email'] = $email;
         $_SESSION['role'] = $user['role'];
         $_SESSION['name'] = $user['name'];
-    
+
+        // Handle remember me
+        if (!empty($_POST['chkRemember'])) {
+            // create tokens table if not exists
+            $pdo->exec("CREATE TABLE IF NOT EXISTS user_tokens (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                user_id DOUBLE,
+                selector VARCHAR(32) NOT NULL,
+                token_hash VARCHAR(255) NOT NULL,
+                expires_at DATETIME NOT NULL,
+                type VARCHAR(32) NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+            $selector = bin2hex(random_bytes(8));
+            $token = bin2hex(random_bytes(33));
+            $token_hash = hash('sha256', $token);
+            $expires = (new DateTime('+30 days'))->format('Y-m-d H:i:s');
+
+            $ins = $pdo->prepare('INSERT INTO user_tokens (user_id, selector, token_hash, expires_at, type) VALUES (?, ?, ?, ?, "remember")');
+            $ins->execute([$user['id'], $selector, $token_hash, $expires]);
+
+            setcookie('remember', $selector . ':' . $token, time() + 60*60*24*30, '/', '', false, true);
+        }
+
         if (isset($redirects[$user['role']])) {
             header("Location: " . $redirects[$user['role']]);
             exit();
