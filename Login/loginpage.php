@@ -19,37 +19,7 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS password_resets (
   expires_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-// Auto-login using remember cookie
-if (empty($_SESSION['email']) && !empty($_COOKIE['remember'])) {
-  list($selector, $token) = explode(':', $_COOKIE['remember']);
-  $stmt = $pdo->prepare('SELECT user_id, token_hash, expires_at FROM user_tokens WHERE selector = ? AND type = "remember" LIMIT 1');
-  $stmt->execute([$selector]);
-  $row = $stmt->fetch(PDO::FETCH_ASSOC);
-  if ($row) {
-    if (new DateTime() < new DateTime($row['expires_at']) && hash_equals($row['token_hash'], hash('sha256', $token))) {
-      // valid token
-      $u = $pdo->prepare('SELECT id, email, role, name FROM users WHERE id = ? LIMIT 1');
-      $u->execute([$row['user_id']]);
-      $user = $u->fetch(PDO::FETCH_ASSOC);
-      if ($user) {
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['name'] = $user['name'];
-        // redirect based on role
-        $redirects = [
-          'adviser' => '../Adviser/adviserDashboard.php',
-          'teacher' => '../Teacher/teacherDashboard.php',
-          'principal' => '../Principal/principalDashboard.php',
-          'admin' => '../Admin/adminDashboard.php'
-        ];
-        if (isset($redirects[$user['role']])) {
-          header('Location: ' . $redirects[$user['role']]);
-          exit();
-        }
-      }
-    }
-  }
-}
+// Auto-login using remember cookie removed — remember-me handled during login only.
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,11 +41,11 @@ if (empty($_SESSION['email']) && !empty($_COOKIE['remember'])) {
         <?php
         if (!empty($_GET['error'])) {
           $msg = htmlspecialchars($_GET['error']);
-          echo "<p style='color:red; font-size:13px;'>$msg</p>";
+          echo "<div class=\"alert alert-error\">" . $msg . "</div>";
         }
         if (!empty($_GET['success'])) {
           $msg = htmlspecialchars($_GET['success']);
-          echo "<p style='color:green; font-size:13px;'>$msg</p>";
+          echo "<div class=\"alert alert-success\">" . $msg . "</div>";
         }
         ?>
 

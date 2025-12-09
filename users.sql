@@ -6,12 +6,13 @@ MySQL - 5.5.5-10.1.25-MariaDB
 /*!40101 SET NAMES utf8 */;
 
 create table `users` (
-	`id` double ,
+	`id` int NOT NULL AUTO_INCREMENT,
 	`name` varchar (765),
 	`email` varchar (2295),
 	`password_hash` varchar (2295),
 	`role` varchar (450),
-	`advisory` varchar(255) DEFAULT NULL
+	`advisory` varchar(255) DEFAULT NULL,
+	PRIMARY KEY (`id`)
 ); 
 insert into `users` (`id`, `name`, `email`, `password_hash`, `role`, `advisory`) values('1','Khian Kervy Mamaril','adviser@gmail.com','$2y$10$ks046Q3Rr3wXUqYL.W56eurAk6WJ5JJlP9dj5fh.GtRyHlOz50IH6','adviser','10 - A');
 insert into `users` (`id`, `name`, `email`, `password_hash`, `role`) values('2','Aron Diolata','teacher@gmail.com','$2y$10$ks046Q3Rr3wXUqYL.W56eurAk6WJ5JJlP9dj5fh.GtRyHlOz50IH6','teacher');

@@ -183,6 +183,17 @@ body {
   background-color: #005fa3;
 }
 
+/* Create button */
+.create-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #001f3f;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.create-btn:hover { opacity: 0.95; }
+
 /* ===== TABLE STYLES ===== */
 .data-table {
   width: 100%;

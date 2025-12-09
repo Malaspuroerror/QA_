@@ -2,6 +2,9 @@
 // Simple logout: destroy session and redirect to login page
 session_start();
 
+// capture email (if present) so we can remove tokens for this user
+$currentEmail = $_SESSION['email'] ?? null;
+
 // Unset all session variables
 $_SESSION = array();
 

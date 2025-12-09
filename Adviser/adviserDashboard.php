@@ -34,7 +34,7 @@ session_start();
           Student
         </a>
         <a href="advisory.php">
-          <img src="../assets/class.png" alt="Advisory Icon">
+          <img src="../assets/google-docs.png" alt="Advisory Icon">
           Advisory
         </a>
         <a href="files.php">

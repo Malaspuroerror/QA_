@@ -8,12 +8,13 @@ $redirects = [
     'admin'     => '../Admin/adminDashboard.php'
 ];
 
+
 if (isset($_POST['btnSignIn'])) {
     $email = trim($_POST['txtEmail']);
     $password = $_POST['txtPassword'];
 
     if (empty($email) || empty($password)) {
-        header("Location: index.php?error=" . urlencode("Email and password are required!"));
+        header("Location: loginpage.php?error=" . urlencode("Email and password are required!"));
         exit();
     }
 
@@ -54,16 +55,17 @@ if (isset($_POST['btnSignIn'])) {
             header("Location: " . $redirects[$user['role']]);
             exit();
         } else {
-            header("Location: index.php?error=" . urlencode("Invalid role! Contact administrator."));
+            header("Location: loginpage.php?error=" . urlencode("Invalid role! Contact administrator."));
             exit();
         }
     } else {
-        header("Location: index.php?error=" . urlencode("Invalid email or password!"));
+        header("Location: loginpage.php?error=" . urlencode("Invalid email or password!"));
         exit();
     }
 } else {
     // If someone tries to access login.php directly
-    header("Location: index.php");
+    header("Location: loginpage.php");
     exit();
 }
+
 ?>
