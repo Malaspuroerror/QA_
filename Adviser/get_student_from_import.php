@@ -11,6 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET'){
 $table = isset($_GET['table']) ? $_GET['table'] : '';
 $student = isset($_GET['student_name']) ? $_GET['student_name'] : '';
 $subject = isset($_GET['subject']) ? trim($_GET['subject']) : '';
+
+// Debug: log received parameters
+error_log("get_student_from_import.php: table=$table, student=$student, subject=$subject");
+
 if (empty($table) || !preg_match('/^[A-Za-z0-9_]+$/', $table) || $student === ''){
     echo json_encode(['success'=>false,'error'=>'Missing parameters']);
     exit;

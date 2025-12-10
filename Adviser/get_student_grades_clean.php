@@ -118,10 +118,41 @@ foreach ($candidates as $table) {
             $q3 = is_numeric($row[3]) ? floatval($row[3]) : null;
             $q4 = is_numeric($row[4]) ? floatval($row[4]) : null;
             $finalStored = is_numeric($row[5]) ? floatval($row[5]) : null;
+            
+            // Extract and map subject name from table
             $subject = trim(preg_replace('/[_]+/',' ', preg_replace('/' . preg_quote($gToken, '/') . '/i','',$table)));
             if ($sToken) $subject = preg_replace('/' . preg_quote($sToken, '/') . '/i','',$subject);
             if ($subject === '') $subject = $table;
-            $results[] = ['table'=>$table,'subject'=>$subject,'q1'=>$q1,'q2'=>$q2,'q3'=>$q3,'q4'=>$q4,'final_stored'=>$finalStored];
+            
+            // Apply subject mapping: normalize common subject codes to full names
+            $subjectMapped = $subject;
+            $subKey = strtoupper(trim($subject));
+            $subjectMap = [
+                'ESP'  => 'Edukasyon Sa Pagpapakatao',
+                'ENG'  => 'English',
+                'MATH' => 'Mathematics',
+                'AP'   => 'Araling Panlipunan',
+                'FIL'  => 'Filipino',
+                'MAPEH'=> 'MAPEH',
+                'SCI'  => 'Science',
+                'EPP'  => 'EPP',
+                'GRMC' => 'GRMC'
+            ];
+            
+            // Try exact match first
+            if (isset($subjectMap[$subKey])) {
+                $subjectMapped = $subjectMap[$subKey];
+            } else {
+                // Try to extract first token and map it
+                if (preg_match('/^([A-Za-z]+)/', $subKey, $m)) {
+                    $first = $m[1];
+                    if (isset($subjectMap[$first])) {
+                        $subjectMapped = $subjectMap[$first];
+                    }
+                }
+            }
+            
+            $results[] = ['table'=>$table,'subject'=>$subjectMapped,'q1'=>$q1,'q2'=>$q2,'q3'=>$q3,'q4'=>$q4,'final_stored'=>$finalStored];
         }
 
     } catch (Exception $e) { $debugLogs[] = "$table inspect error: " . $e->getMessage(); continue; }

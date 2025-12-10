@@ -117,7 +117,17 @@ document.addEventListener('DOMContentLoaded', function() {
       // If an imported file is selected, fetch that single student's grades from server
       if (selectedImportedTable) {
         gradesTbody.innerHTML = '';
-        fetch('get_student_from_import.php?table=' + encodeURIComponent(selectedImportedTable) + '&student_name=' + encodeURIComponent(studentName))
+        // Get the subject from the selected option's text (which includes subject name)
+        const selectedOption = approvedSelect.options[approvedSelect.selectedIndex];
+        const optionText = selectedOption ? selectedOption.textContent : '';
+        // Extract subject from the text (it's after the " — " separator)
+        let subjectToPass = '';
+        const dashIdx = optionText.indexOf(' — ');
+        if (dashIdx > 0) {
+          subjectToPass = optionText.substring(dashIdx + 3).trim();
+        }
+        console.log('Modal opened: optionText="' + optionText + '", dashIdx=' + dashIdx + ', subjectToPass="' + subjectToPass + '"');
+        fetch('get_student_from_import.php?table=' + encodeURIComponent(selectedImportedTable) + '&student_name=' + encodeURIComponent(studentName) + (subjectToPass ? '&subject=' + encodeURIComponent(subjectToPass) : ''))
           .then(r => r.json())
           .then(d => {
             if (!gradesTbody) return;

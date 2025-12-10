@@ -141,6 +141,7 @@
             if (dashIdx > 0) {
               subjectToPass = optionText.substring(dashIdx + 3).trim();
             }
+            console.log('Modal opened: optionText="' + optionText + '", dashIdx=' + dashIdx + ', subjectToPass="' + subjectToPass + '"');
             fetch('../Adviser/get_student_from_import.php?table=' + encodeURIComponent(selectedImportedTable) + '&student_name=' + encodeURIComponent(studentName) + (subjectToPass ? '&subject=' + encodeURIComponent(subjectToPass) : ''))
               .then(r => r.json())
               .then(d => {
